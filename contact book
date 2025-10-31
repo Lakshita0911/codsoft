@@ -1,0 +1,110 @@
+import re
+
+contacts = []
+
+def is_valid_phone(phone):
+    return phone.isdigit() and len(phone) == 10
+
+def is_valid_email(email):
+    pattern = r'^[\w\.-]+@[\w\.-]+\.\w{2,}$'
+    return re.match(pattern, email) is not None
+
+def add_contact():
+    name = input("Enter name: ")
+    phone = input("Enter 10-digit phone number: ")
+    if not is_valid_phone(phone):
+        print("❌ Invalid phone number. It must be exactly 10 digits.\n")
+        return
+    email = input("Enter email: ")
+    if not is_valid_email(email):
+        print("❌ Invalid email format.\n")
+        return
+    address = input("Enter address: ")
+    contacts.append({
+        "name": name,
+        "phone": phone,
+        "email": email,
+        "address": address
+    })
+    print(f"✅ Contact '{name}' added successfully!\n")
+
+def view_contacts():
+    if not contacts:
+        print("📭 No contacts found.\n")
+        return
+    print("\n📋 Contact List:")
+    for i, contact in enumerate(contacts, start=1):
+        print(f"{i}. {contact['name']} - {contact['phone']}")
+    print()
+    
+def search_contact():
+    query = input("🔍 Search by name or phone: ").lower()
+    found = [c for c in contacts if query in c['name'].lower() or query in c['phone']]
+    if found:
+        print("\n🔎 Search Results:")
+        for contact in found:
+            print(f"Name: {contact['name']}")
+            print(f"Phone: {contact['phone']}")
+            print(f"Email: {contact['email']}")
+            print(f"Address: {contact['address']}\n")
+    else:
+        print("❌ No matching contact found.\n")
+
+def update_contact():
+    name = input("Enter the name of the contact to update: ").lower()
+    for contact in contacts:
+        if contact['name'].lower() == name:
+            print("Leave blank to keep current value.")
+            new_phone = input(f"New phone ({contact['phone']}): ")
+            if new_phone and not is_valid_phone(new_phone):
+                print("❌ Invalid phone number. Update cancelled.\n")
+                return
+            new_email = input(f"New email ({contact['email']}): ")
+            if new_email and not is_valid_email(new_email):
+                print("❌ Invalid email format. Update cancelled.\n")
+                return
+            contact['phone'] = new_phone or contact['phone']
+            contact['email'] = new_email or contact['email']
+            contact['address'] = input(f"New address ({contact['address']}): ") or contact['address']
+            print("✅ Contact updated successfully!\n")
+            return
+    print("❌ Contact not found.\n")
+
+def delete_contact():
+    name = input("Enter the name of the contact to delete: ").lower()
+    for contact in contacts:
+        if contact['name'].lower() == name:
+            contacts.remove(contact)
+            print(f"🗑️ Contact '{name}' deleted.\n")
+            return
+    print("❌ Contact not found.\n")
+
+def main():
+    print("📞 Welcome to Contact Manager!")
+    while True:
+        print("Choose an option:")
+        print("1. Add Contact")
+        print("2. View Contact List")
+        print("3. Search Contact")
+        print("4. Update Contact")
+        print("5. Delete Contact")
+        print("6. Exit")
+        choice = input("Enter your choice (1-6): ")
+
+        if choice == '1':
+            add_contact()
+        elif choice == '2':
+            view_contacts()
+        elif choice == '3':
+            search_contact()
+        elif choice == '4':
+            update_contact()
+        elif choice == '5':
+            delete_contact()
+        elif choice == '6':
+            print("👋 Goodbye!")
+            break
+        else:
+            print("⚠️ Invalid choice. Please try again.\n")
+
+main()
